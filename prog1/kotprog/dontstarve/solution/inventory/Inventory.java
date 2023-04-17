@@ -4,6 +4,7 @@ import prog1.kotprog.dontstarve.solution.exceptions.NotImplementedException;
 import prog1.kotprog.dontstarve.solution.inventory.BaseInventory;
 import prog1.kotprog.dontstarve.solution.inventory.items.AbstractItem;
 import prog1.kotprog.dontstarve.solution.inventory.items.EquippableItem;
+import prog1.kotprog.dontstarve.solution.inventory.items.Item;
 import prog1.kotprog.dontstarve.solution.inventory.items.ItemType;
 
 import java.util.Map;
@@ -70,22 +71,60 @@ public class Inventory implements BaseInventory {
     @Override
     public boolean addItem(AbstractItem item) {
         if (item == null) {
-            return false;
+        return false;
         }
+        
+        boolean itemAdded = false;
+        int emptySlot = -1;
+        int maxStackAmount = getMaxAmount(item.getType());
 
         for (int i = 0; i < inventory.length; i++) {
-            if (isStackable(item.getType()) && inventory[i] != null && inventory[i].getType() == item.getType()
-                    && inventory[i].getAmount() < getMaxAmount(item.getType())) {
-                int newAmount = inventory[i].getAmount() + item.getAmount();
-                setAmount(item.getType(), i, newAmount);
-                return true;
-            } else if (!isStackable(item.getType()) && inventory[i] == null) {
-                inventory[i] = item;
-                return true;
+            AbstractItem currentItem = inventory[i];
+            if (currentItem != null) {
+                if (currentItem.getType() == item.getType() && currentItem.getAmount() < maxStackAmount) {
+                    int spaceInStack = maxStackAmount - currentItem.getAmount();
+                    int amountToAdd = Math.min(item.getAmount(), spaceInStack);
+                    currentItem.setAmount(currentItem.getAmount() + amountToAdd);
+                    item.setAmount(item.getAmount() - amountToAdd);
+                    if (item.getAmount() == 0) {
+                        itemAdded = true;
+                        break;
+                    }
+                }
+            } else if (emptySlot == -1) {
+                emptySlot = i;
             }
         }
 
-        return false;
+        if (!itemAdded && emptySlot != -1) {
+            if (item.getAmount() <= maxStackAmount) {
+                inventory[emptySlot] = item;
+                itemAdded = true;
+            } else {
+                Item stackableItem = new Item(item.getType(), maxStackAmount);
+                stackableItem.setAmount(maxStackAmount);
+                inventory[emptySlot] = stackableItem;
+                item.setAmount(item.getAmount() - maxStackAmount);
+            }
+        }
+
+        if (!itemAdded) {
+            for (int i = 0; i < inventory.length; i++) {
+                AbstractItem currentItem = inventory[i];
+                if (currentItem != null && currentItem.getAmount() < maxStackAmount) {
+                    int spaceInStack = maxStackAmount - currentItem.getAmount();
+                    int amountToAdd = Math.min(item.getAmount(), spaceInStack);
+                    currentItem.setAmount(currentItem.getAmount() + amountToAdd);
+                    item.setAmount(item.getAmount() - amountToAdd);
+                    if (item.getAmount() == 0) {
+                        itemAdded = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return itemAdded;
     }
 
     private void setAmount(ItemType itemType, int index, int amount) {
@@ -114,6 +153,18 @@ public class Inventory implements BaseInventory {
     @Override
     public boolean removeItem(ItemType type, int amount) {
         int amountToRemove = amount;
+        int totalAmount = 0;
+        for (int i = 0; i < inventory.length; i++) {
+            AbstractItem item = inventory[i];
+            if (item != null && item.getType() == type) {
+                totalAmount += item.getAmount();
+            }
+        }
+    
+        if (totalAmount < amountToRemove) {
+            return false;
+        }
+    
         for (int i = 0; i < inventory.length && amountToRemove > 0; i++) {
             AbstractItem item = inventory[i];
             if (item != null && item.getType() == type) {
@@ -127,41 +178,74 @@ public class Inventory implements BaseInventory {
                 }
             }
         }
-        return amountToRemove == 0;
-    }
-
-    
-
-    @Override
-    public boolean swapItems(int index1, int index2) {
-        boolean isValidIndex = index1 >= 0 && index1 < inventory.length && index2 >= 0 && index2 < inventory.length;
-        if (!isValidIndex || inventory[index1] == null && inventory[index2] == null) {
-            return false;
-        }
-        AbstractItem temp = inventory[index1];
-        inventory[index1] = inventory[index2];
-        inventory[index2] = temp;
         return true;
     }    
 
     @Override
-    public boolean moveItem(int index, int newIndex) {
-        try {
-            if (newIndex <= 9 && newIndex >= 0) {
-                if (inventory[index] != null && inventory[newIndex] == null) {
-                    AbstractItem toMove = inventory[index];
-                    inventory[index] = null;
-                    inventory[newIndex] = toMove;
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } catch (Exception ex) {
+    public boolean swapItems(int index1, int index2) {
+        boolean isValidIndex = index1 >= 0 && index1 < inventory.length && index2 >= 0 && index2 < inventory.length;
+        if (!isValidIndex) {
             return false;
         }
+    
+        AbstractItem item1 = inventory[index1];
+        AbstractItem item2 = inventory[index2];
+    
+        if (item1 == null && item2 == null) {
+            return false;
+        }
+    
+        if (item1 != null && item2 != null) {
+            if (item1.getType() == item2.getType()) {
+                int totalAmount = item1.getAmount() + item2.getAmount();
+                int maxStackAmount = getMaxAmount(item1.getType());
+                if (totalAmount <= maxStackAmount) {
+                    item1.setAmount(totalAmount);
+                    inventory[index2] = null;
+                    return true;
+                } else {
+                    Item stackableItem = new Item(item1.getType(), maxStackAmount);
+                    stackableItem.setAmount(maxStackAmount);
+                    item1.setAmount(totalAmount - maxStackAmount);
+                    inventory[index2] = stackableItem;
+                    return true;
+                }
+            } else {
+                inventory[index1] = item2;
+                inventory[index2] = item1;
+                return true;
+            }
+        } else if (item1 == null && item2 != null) {
+            inventory[index1] = item2;
+            inventory[index2] = null;
+            return true;
+        } else if (item1 != null && item2 == null) {
+            inventory[index1] = null;
+            inventory[index2] = item1;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    
+
+    @Override
+    public boolean moveItem(int index, int newIndex) {
+        boolean isValidIndex = index >= 0 && index < inventory.length && newIndex >= 0 && newIndex < inventory.length;
+        if (!isValidIndex) {
+            return false;
+        }
+        if (inventory[index] == null) {
+            return false;
+        }
+        if (inventory[newIndex] != null) {
+            return false;
+        }
+        AbstractItem toMove = inventory[index];
+        inventory[index] = null;
+        inventory[newIndex] = toMove;
+        return true;
     }
 
     @Override
@@ -191,23 +275,22 @@ public class Inventory implements BaseInventory {
 
     @Override
     public boolean equipItem(int index) {
-        if (index >= 0 && index < this.inventory.length) {
-            AbstractItem temp;
-            if (this.inventory[index] != null) {
-                if (this.inventory[index] instanceof EquippableItem) {
-                    if (this.hand == null) {
-                        this.hand = (EquippableItem) this.inventory[index];
-                    } else {
-                        temp = this.inventory[index];
-                        this.inventory[index] = this.hand;
-                        this.hand = (EquippableItem) temp;
-                    }
+        if (index >= 0 && index <= inventory.length - 1) {
+            if (inventory[index] != null && inventory[index] instanceof EquippableItem) {
+                if (hand == null) {
+                    hand = (EquippableItem) inventory[index];
+                    inventory[index] = null;
+                    return true;
+                } else {
+                    AbstractItem temp = inventory[index];
+                    inventory[index] = hand;
+                    hand = (EquippableItem) temp;
                     return true;
                 }
             }
         }
         return false;
-    }
+    }    
 
     @Override
     public EquippableItem unequipItem() {
