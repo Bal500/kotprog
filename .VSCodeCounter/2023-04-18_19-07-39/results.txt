@@ -1,0 +1,90 @@
+Date : 2023-04-18 19:07:39
+Directory : c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution
+Total : 55 files,  1155 codes, 863 comments, 342 blanks, all 2360 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         55 |      1,155 |        863 |        342 |      2,360 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                 | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                    |         55 |      1,155 |        863 |        342 |      2,360 |
+| . (Files)                                                                                                            |          2 |        177 |        120 |         40 |        337 |
+| annotations                                                                                                          |          2 |          7 |          6 |          4 |         17 |
+| character                                                                                                            |         21 |        267 |        308 |        106 |        681 |
+| character (Files)                                                                                                    |          3 |         80 |         38 |         26 |        144 |
+| character\actions                                                                                                    |         18 |        187 |        270 |         80 |        537 |
+| exceptions                                                                                                           |          2 |          7 |         10 |          2 |         19 |
+| inventory                                                                                                            |         20 |        536 |        267 |        132 |        935 |
+| inventory (Files)                                                                                                    |          3 |        408 |         97 |         80 |        585 |
+| inventory\items                                                                                                      |         17 |        128 |        170 |         52 |        350 |
+| level                                                                                                                |          5 |        127 |         99 |         44 |        270 |
+| utility                                                                                                              |          3 |         34 |         53 |         14 |        101 |
++----------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                             | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\GameManager.java                           | Java     |        176 |        117 |         39 |        332 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\annotations\Testable.java                  | Java     |          6 |          3 |          3 |         12 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\annotations\package-info.java              | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\BaseCharacter.java               | Java     |         13 |         35 |          9 |         57 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\Character.java                   | Java     |         66 |          0 |         16 |         82 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\Action.java              | Java     |         10 |         15 |          4 |         29 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionAttack.java        | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionCollectItem.java   | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionCombineItems.java  | Java     |         16 |         23 |          6 |         45 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionCook.java          | Java     |         11 |         15 |          4 |         30 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionCraft.java         | Java     |         12 |         15 |          5 |         32 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionDropItem.java      | Java     |         11 |         15 |          4 |         30 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionEat.java           | Java     |         11 |         15 |          4 |         30 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionEquip.java         | Java     |         11 |         15 |          4 |         30 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionInteract.java      | Java     |          6 |          7 |          2 |         15 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionMoveItem.java      | Java     |         16 |         22 |          6 |         44 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionNone.java          | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionStep.java          | Java     |         12 |         15 |          5 |         32 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionStepAndAttack.java | Java     |         12 |         14 |          5 |         31 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionSwapItems.java     | Java     |         16 |         23 |          6 |         45 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionType.java          | Java     |         18 |         49 |         16 |         83 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\ActionUnequip.java       | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\actions\package-info.java        | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\character\package-info.java                | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\exceptions\NotImplementedException.java    | Java     |          6 |          7 |          1 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\exceptions\package-info.java               | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\BaseInventory.java               | Java     |         19 |         94 |         14 |        127 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\Inventory.java                   | Java     |        388 |          0 |         65 |        453 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\AbstractItem.java          | Java     |         18 |         23 |          7 |         48 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\EquippableItem.java        | Java     |         16 |         19 |          5 |         40 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\Item.java                  | Java     |          6 |          0 |          2 |          8 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemAxe.java               | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemCookedBerry.java       | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemCookedCarrot.java      | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemFire.java              | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemLog.java               | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemPickaxe.java           | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemRawBerry.java          | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemRawCarrot.java         | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemSpear.java             | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemStone.java             | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemTorch.java             | Java     |          6 |          6 |          2 |         14 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemTwig.java              | Java     |          6 |          8 |          2 |         16 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\ItemType.java              | Java     |         15 |         39 |         13 |         67 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\items\package-info.java          | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\inventory\package-info.java                | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\level\BaseField.java                       | Java     |         12 |         38 |         10 |         60 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\level\Field.java                           | Java     |         73 |          0 |         15 |         88 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\level\Level.java                           | Java     |         30 |         31 |         10 |         71 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\level\MapColors.java                       | Java     |         11 |         27 |          8 |         46 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\level\package-info.java                    | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\package-info.java                          | Java     |          1 |          3 |          1 |          5 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\utility\Direction.java                     | Java     |          7 |         15 |          5 |         27 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\utility\Position.java                      | Java     |         26 |         35 |          8 |         69 |
+| c:\Users\fabia\OneDrive\Desktop\kotprog\prog1\kotprog\dontstarve\solution\utility\package-info.java                  | Java     |          1 |          3 |          1 |          5 |
+| Total                                                                                                                |          |      1,155 |        863 |        342 |      2,360 |
++----------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

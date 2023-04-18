@@ -1,6 +1,9 @@
 package prog1.kotprog.dontstarve.solution.level;
 
 import javax.imageio.ImageIO;
+
+import prog1.kotprog.dontstarve.solution.utility.Position;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -50,5 +53,18 @@ public class Level {
      */
     public int getColor(int x, int y) {
         return image.getRGB(x, y);
+    }
+
+    /**
+     * Kiszámítja két pozíció távolságát.
+     *
+     * @param pos1 az első pozíció
+     * @param pos2 a második pozíció
+     * @return a két pozíció távolsága
+     */
+    public double distance(Position pos1, Position pos2) {
+        float xDiff = pos1.getX() - pos2.getX();
+        float yDiff = pos1.getY() - pos2.getY();
+        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     }
 }

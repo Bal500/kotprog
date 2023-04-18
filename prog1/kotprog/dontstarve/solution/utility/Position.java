@@ -1,7 +1,5 @@
 package prog1.kotprog.dontstarve.solution.utility;
 
-//import prog1.kotprog.dontstarve.solution.exceptions.NotImplementedException;
-
 /**
  * Egy 2 dimenziós (x, y) koordinátát leíró osztály.
  */

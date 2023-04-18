@@ -1,7 +1,5 @@
 package prog1.kotprog.dontstarve.solution.inventory;
 
-import prog1.kotprog.dontstarve.solution.exceptions.NotImplementedException;
-import prog1.kotprog.dontstarve.solution.inventory.BaseInventory;
 import prog1.kotprog.dontstarve.solution.inventory.items.AbstractItem;
 import prog1.kotprog.dontstarve.solution.inventory.items.EquippableItem;
 import prog1.kotprog.dontstarve.solution.inventory.items.Item;
@@ -9,7 +7,6 @@ import prog1.kotprog.dontstarve.solution.inventory.items.ItemType;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -35,6 +32,13 @@ public class Inventory implements BaseInventory {
         dictionary.put(ItemType.COOKED_CARROT, 10);
         dictionary.put(ItemType.RAW_BERRY, 10);
         dictionary.put(ItemType.COOKED_BERRY, 10);
+    }
+
+    public boolean isValidIndex(int index) {
+        if (index < 0 || index >= 9) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isStackable(ItemType stackable) {
@@ -123,20 +127,7 @@ public class Inventory implements BaseInventory {
                 }
             }
         }
-
         return itemAdded;
-    }
-
-    private void setAmount(ItemType itemType, int index, int amount) {
-        for (int i = 0; i < inventory.length; i++) {
-            if (inventory[i] != null && inventory[i].getType() == itemType && i != index) {
-                continue;
-            }
-            if (inventory[i] != null && inventory[i].getType() == itemType && i == index) {
-                inventory[i].setAmount(amount);
-                return;
-            }
-        }
     }
 
 
@@ -183,15 +174,14 @@ public class Inventory implements BaseInventory {
 
     @Override
     public boolean swapItems(int index1, int index2) {
-        boolean isValidIndex = index1 >= 0 && index1 < inventory.length && index2 >= 0 && index2 < inventory.length;
-        if (!isValidIndex) {
+        if (!isValidIndex(index1) || !isValidIndex(index2)) {
             return false;
         }
     
         AbstractItem item1 = inventory[index1];
         AbstractItem item2 = inventory[index2];
     
-        if (item1 == null && item2 == null) {
+        if (item1 == null || item2 == null) {
             return false;
         }
     
@@ -215,25 +205,14 @@ public class Inventory implements BaseInventory {
                 inventory[index2] = item1;
                 return true;
             }
-        } else if (item1 == null && item2 != null) {
-            inventory[index1] = item2;
-            inventory[index2] = null;
-            return true;
-        } else if (item1 != null && item2 == null) {
-            inventory[index1] = null;
-            inventory[index2] = item1;
-            return true;
         } else {
             return false;
         }
     }
     
-    
-
     @Override
     public boolean moveItem(int index, int newIndex) {
-        boolean isValidIndex = index >= 0 && index < inventory.length && newIndex >= 0 && newIndex < inventory.length;
-        if (!isValidIndex) {
+        if (!isValidIndex(index) || !isValidIndex(newIndex)) {
             return false;
         }
         if (inventory[index] == null) {
@@ -250,25 +229,40 @@ public class Inventory implements BaseInventory {
 
     @Override
     public boolean combineItems(int index1, int index2) {
-        AbstractItem item1 = inventory[index1];
-        AbstractItem item2 = inventory[index2];
-
-        if (item1 == null || item2 == null || !isStackable(item1.getType()) || item1.getType() != item2.getType()) {
+        if (!isValidIndex(index1) || !isValidIndex(index2)) {
             return false;
         }
 
-        int sumAmount = item1.getAmount() + item2.getAmount();
-        int maxAmount = getMaxAmount(item1.getType());
-
-        if (sumAmount <= maxAmount) {
-            item1.setAmount(sumAmount);
-            inventory[index2] = null;
-            return true;
-        } else {
-            item1.setAmount(maxAmount);
-            item2.setAmount(sumAmount - maxAmount);
-            return true;
+        if (inventory[index1] == null || inventory[index2] == null) {
+            return false;
         }
+
+        if (inventory[index1] instanceof EquippableItem || !inventory[index1].equals(inventory[index2])) {
+            return false;
+        }
+
+        int firstIndex = Math.min(index1, index2);
+        int lastIndex = Math.max(index1, index2);
+
+        AbstractItem item1 = inventory[firstIndex];
+        AbstractItem item2 = inventory[lastIndex];
+        int item1Amount = item1.getAmount();
+        int item2Amount = item2.getAmount();
+        int maxStack = getMaxAmount(item1.getType());
+
+        if (item1Amount == maxStack || index1 == index2) {
+            return false;
+        }
+
+        if (item1Amount + item2Amount <= maxStack) {
+            item1.setAmount(item1Amount + item2Amount);
+            inventory[lastIndex] = null;
+        } else {
+            int leftOver = item1Amount + item2Amount - maxStack;
+            item1.setAmount(maxStack);
+            inventory[lastIndex].setAmount(leftOver);
+        }
+        return true;
     }
 
     
@@ -309,53 +303,103 @@ public class Inventory implements BaseInventory {
         }
     
         if (slot == -1) {
-            dropItem(slot);
+            for (int i = inventory.length - 1; i >= 0; i--) {
+                if (inventory[i] != null) {
+                    dropItem(i);
+                    inventory[i] = null;
+                    break;
+                }
+            }
+            inventory[slot] = hand;
             hand = null;
             return null;
         }
     
         inventory[slot] = hand;
         hand = null;
-        return item;
+        return null;
     }
     
 
     @Override
     public ItemType cookItem(int index) {
+        if (index < 0 || index >= inventory.length) {
+            return null;
+        }
+
         AbstractItem item = inventory[index];
+        
         if (item == null) {
             return null;
         }
+        
         ItemType itemType = item.getType();
-        if (!isEdible(itemType) || item.getAmount() == 0) {
-            return itemType;
+        
+        if (!isEdible(itemType) || item.getAmount() == 0 || inventory[index].getType() == ItemType.COOKED_BERRY || inventory[index].getType() == ItemType.COOKED_CARROT) {
+            return null;
         }
-        if (itemType == ItemType.RAW_CARROT) {
-            itemType = ItemType.COOKED_CARROT;
-        } else if (itemType == ItemType.RAW_BERRY) {
-            itemType = ItemType.COOKED_BERRY;
+        
+        int stackSize = getMaxAmount(itemType);
+        int amount = item.getAmount();
+        int remainingAmount = 0;
+        ItemType cookedItemType = null;
+        
+        if (amount <= stackSize) {
+            remainingAmount = 0;
+            cookedItemType = cookSingleItem(itemType);
+        } else {
+            int fullStacks = amount / stackSize;
+            int partialStack = amount % stackSize;
+            remainingAmount = (fullStacks * stackSize) + (partialStack > 0 ? partialStack - 1 : 0);
+            cookedItemType = cookSingleItem(itemType);
         }
-        item.setAmount(item.getAmount() - 1);
-        return itemType;
+        
+        if (cookedItemType != null) {
+            if (remainingAmount > 0) {
+                item.setAmount(remainingAmount);
+            } else {
+                inventory[index] = null;
+            }
+        }
+        return cookedItemType;
     }
+    
+    private ItemType cookSingleItem(ItemType itemType) {
+        switch (itemType) {
+            case RAW_CARROT:
+                return ItemType.COOKED_CARROT;
+            case RAW_BERRY:
+                return ItemType.COOKED_BERRY;
+            default:
+                return null;
+        }
+    }
+    
 
     
     
     @Override
     public ItemType eatItem(int index) {
+        if (!isValidIndex(index)) {
+            return null;
+        }
+
         AbstractItem item = inventory[index];
-        if (item == null) {
-            return null;
-        }
         ItemType type = item.getType();
-        if (!isEdible(type)) {
-            return null;
+
+        if (inventory[index] == null) {
+            return type;
         }
+
+        if (item == null || !isEdible(type)) {
+            return type;
+        }
+
         int currentAmount = item.getAmount();
         if (currentAmount == 1) {
             inventory[index] = null;
         } else {
-            item.setAmount(currentAmount - 1);
+            inventory[index].setAmount(currentAmount - 1);
         }
         return type;
     }

@@ -3,16 +3,16 @@ package prog1.kotprog.dontstarve.solution;
 import prog1.kotprog.dontstarve.solution.character.BaseCharacter;
 import prog1.kotprog.dontstarve.solution.character.Character;
 import prog1.kotprog.dontstarve.solution.character.actions.Action;
-import prog1.kotprog.dontstarve.solution.character.actions.ActionStep;
 import prog1.kotprog.dontstarve.solution.exceptions.NotImplementedException;
+import prog1.kotprog.dontstarve.solution.inventory.BaseInventory;
+import prog1.kotprog.dontstarve.solution.inventory.items.AbstractItem;
 import prog1.kotprog.dontstarve.solution.level.BaseField;
+import prog1.kotprog.dontstarve.solution.level.Field;
 import prog1.kotprog.dontstarve.solution.level.Level;
-import prog1.kotprog.dontstarve.solution.utility.Direction;
 import prog1.kotprog.dontstarve.solution.utility.Position;
 
 import java.util.Random;
 import java.util.List;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -34,8 +34,21 @@ public final class GameManager {
      * A pályát tároló lista.
      */
     private BaseField[][] fields;
+
+    /**
+     * Ez a változó jelzi, hogy a pálya betöltésre került-e már.
+     */
     private boolean loaded;
-    private Level level;
+
+    /**
+     * A pályát tároló változó.
+     */
+    Level level;
+
+    /**
+     * Ez a változó jelzi, hogy az emberi játékos csatlakozott-e a játékba.
+     */
+    boolean playerJoined;
 
     /**
      * A karaktereket tároló lista.
@@ -43,10 +56,18 @@ public final class GameManager {
     private List<BaseCharacter> characters;
 
     /**
+     * Az inventoryt tároló tömb.
+     */
+    private AbstractItem[] inventory;
+
+    /**
      * Az emberi játékos karakter.
      */
-    private BaseCharacter humanPlayer;
     private String humanName;
+
+    /**
+     * Ez a változó jelzi, hogy a játék elkezdődött-e már.
+     */
     private boolean gameStarted;
 
     /**
@@ -64,9 +85,11 @@ public final class GameManager {
      */
     private GameManager() {
         characters = new ArrayList<>();
+        inventory = new AbstractItem[10];
         this.tutorial = false;
         this.loaded = false;
         this.gameStarted = false;
+        this.playerJoined = false;
         this.time = 0;
     }
 
@@ -101,19 +124,52 @@ public final class GameManager {
      * @return a karakter pozíciója a pályán, vagy (Integer.MAX_VALUE, Integer.MAX_VALUE) ha nem sikerült hozzáadni
      */
     public Position joinCharacter(String name, boolean player) {
-        int counter = 0;
-        characters.add(new Character(name, 1.0f, 100.0f, 100.0f));
-
         if (player) {
-            this.humanName = name;
-            counter++;
+            playerJoined = true;
         }
 
-        if (fields == null || isGameStarted() || counter <= 1 || characters.stream().anyMatch(c -> c.getName().equals(name))) {
-            return new Position(random.nextInt(), random.nextInt());
+        if (level == null || gameStarted || playerJoined) {
+            return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
         }
-        return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        
+    
+        for (BaseCharacter character : characters) {
+            if (character != null && character.getName().equals(name)) {
+                return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            }
+        }
+        
+    
+        int threshold = 50;
+        boolean placed = false;
+        while (!placed && threshold >= 5) {
+            int x = random.nextInt(level.getWidth());
+            int y = random.nextInt(level.getHeight());
+            Position pos = new Position(x, y);
+            boolean valid = true;
+            for (BaseCharacter character : characters) {
+                if (level.distance(character.getCurrentPosition(), pos) < threshold) {
+                    valid = false;
+                    break;
+                }
+            }
+            if (valid && getField(x, y).isWalkable()) {
+                BaseCharacter character = new Character(name, x, y);
+                characters.add(character);
+                placed = true;
+                return new Position(x, y);
+            } else {
+                threshold -= 5;
+            }
+        }
+
+        if (!placed) {
+            return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+
+        return characters.get(characters.size() - 1).getCurrentPosition();
     }
+    
 
     /**
      * Egy adott nevű karakter lekérésére szolgáló metódus.<br>
@@ -154,13 +210,13 @@ public final class GameManager {
      * @param level a fájlból betöltött pálya
      */
     public void loadLevel(Level level) {
-        fields = new BaseField[level.getWidth()][level.getHeight()];
-
-        if (characters.size() == 0) {
-            if (!loaded) {
+        if (!loaded) {
+            fields = new Field[level.getWidth()][level.getHeight()];
+            this.level = level;
+            if (level != null && !loaded && characters.size() == 0) {
                 for (int i = 0; i < level.getWidth(); i++) {
                     for (int j = 0; j < level.getHeight(); j++) {
-                        level.getColor(i, j);
+                        fields[i][j] = new Field(level.getColor(i, j), i, j);
                     }
                 }
                 loaded = true;
@@ -185,21 +241,37 @@ public final class GameManager {
      * @return igaz, ha sikerült elkezdeni a játékot; hamis egyébként
      */
     public boolean startGame() {
-        int playerCount = 0;
+        if (!gameStarted) {
+            int humanCount = 0;
+            int botCount = 0;
+            boolean hasComputerPlayer = false;
+            boolean hasHumanPlayer = false;
 
-        for (BaseCharacter character : characters) {
-            if (character.getName() == humanName) {
-                playerCount++;
+            for (BaseCharacter character : characters) {
+                if (character.getName().equals(humanName)) {
+                    humanCount++;
+                    hasHumanPlayer = true;
+                } else {
+                    botCount++;
+                    hasComputerPlayer = true;
+                }
             }
-        }
 
-        if (characters.size() >= 2 && playerCount == 1) {
-            gameStarted = true;
-            return true;
+            if (!hasComputerPlayer || !hasHumanPlayer) {
+                return false;
+            }
+
+            if (characters.size() >= 2 && humanCount == 1 && botCount >= 1 && hasComputerPlayer && hasHumanPlayer) {
+                gameStarted = true;
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
     }
+
 
     /**
      * Ez a metódus jelzi, hogy 1 időegység eltelt.<br>
