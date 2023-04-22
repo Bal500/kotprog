@@ -181,7 +181,6 @@ public class Inventory implements BaseInventory {
      */
     @Override
     public boolean removeItem(ItemType type, int amount) {
-        int amountToRemove = amount;
         int totalAmount = 0;
         for (AbstractItem invMan : inventoryManager) {
             AbstractItem item = invMan;
@@ -190,20 +189,20 @@ public class Inventory implements BaseInventory {
             }
         }
 
-        if (totalAmount < amountToRemove) {
+        if (totalAmount < amount) {
             return false;
         }
 
-        for (int i = 0; i < inventoryManager.length && amountToRemove > 0; i++) {
+        for (int i = 0; i < inventoryManager.length && amount > 0; i++) {
             AbstractItem item = inventoryManager[i];
             if (item != null && item.getType() == type) {
                 int currentAmount = item.getAmount();
-                if (currentAmount <= amountToRemove) {
+                if (currentAmount <= amount) {
                     inventoryManager[i] = null;
-                    amountToRemove -= currentAmount;
+                    amount -= currentAmount;
                 } else {
-                    item.setAmount(currentAmount - amountToRemove);
-                    amountToRemove = 0;
+                    item.setAmount(currentAmount - amount);
+                    amount = 0;
                 }
             }
         }
@@ -366,9 +365,26 @@ public class Inventory implements BaseInventory {
                 }
             }
         } else {
-            return hand;
+            EquippableItem unequipped = hand;
+            hand = null;
+            return unequipped;
         }
         return hand;
+    }
+
+    /**
+     * A cookItem és eatItem metódusok nagyon hasonlóak.<br>
+     * A közös kódrészeket kiszerveztük egy új metódusba.
+     * @param index a megfőzendő/megevendő item indexe
+     */
+    public void kozosReszek(int index) {
+        AbstractItem item = inventoryManager[index];
+
+        if (item.getAmount() - 1 == 0) {
+            inventoryManager[index] = null;
+        } else {
+            item.setAmount(item.getAmount() - 1);
+        }
     }
 
     /**
@@ -394,11 +410,7 @@ public class Inventory implements BaseInventory {
             return itemType;
         }
 
-        if (item.getAmount() - 1 == 0) {
-            inventoryManager[index] = null;
-        } else {
-            item.setAmount(item.getAmount() - 1);
-        }
+        kozosReszek(index);
 
         return itemType;
     }
@@ -422,11 +434,7 @@ public class Inventory implements BaseInventory {
             return null;
         }
 
-        if (item.getAmount() - 1 == 0) {
-            inventoryManager[index] = null;
-        } else {
-            item.setAmount(item.getAmount() - 1);
-        }
+        kozosReszek(index);
 
         return itemType;
     }
