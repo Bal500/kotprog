@@ -41,6 +41,10 @@ public abstract class AbstractItem {
         return amount;
     }
 
+    /**
+     * Az amount settere.
+     * @param a tárgy mennyisége
+     */
     public void setAmount(int amount) {
         this.amount = amount;
     }

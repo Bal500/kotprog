@@ -62,5 +62,5 @@ public enum ItemType {
     /**
      * tábortűz (inventory-ban nem tárolható!).
      */
-    FIRE
+    FIRE;
 }

@@ -52,5 +52,5 @@ public interface BaseCharacter {
      * A játékos nevének lekérdezésére szolgáló metódus.
      * @return a játékos neve
      */
-    public String getName();
+    String getName();
 }
