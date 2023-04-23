@@ -373,15 +373,6 @@ public class Inventory implements BaseInventory {
     }
 
     /**
-     * A cookItem és eatItem metódusok nagyon hasonlóak.<br>
-     * A közös kódrészeket kiszerveztük egy új metódusba.
-     * @param index a megfőzendő/megevendő item indexe
-     */
-    public void kozosReszek(int index) {
-        
-    }
-
-    /**
      * Egy item megfőzése.<br>
      * Csak nyers étel főzhető meg. Hatására az inventory adott pozíciójáról 1 egységnyi eltűnik.
      * @param index A megfőzni kívánt item pozíciója az inventory-ban
