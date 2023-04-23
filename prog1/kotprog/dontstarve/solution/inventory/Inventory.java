@@ -378,13 +378,7 @@ public class Inventory implements BaseInventory {
      * @param index a megfőzendő/megevendő item indexe
      */
     public void kozosReszek(int index) {
-        AbstractItem item = inventoryManager[index];
-
-        if (item.getAmount() - 1 == 0) {
-            inventoryManager[index] = null;
-        } else {
-            item.setAmount(item.getAmount() - 1);
-        }
+        
     }
 
     /**
@@ -395,10 +389,6 @@ public class Inventory implements BaseInventory {
      */
     @Override
     public ItemType cookItem(int index) {
-        if (!validateIndex(index)) {
-            return null;
-        }
-
         AbstractItem item = inventoryManager[index];
         ItemType itemType = getItemType(item);
 
@@ -406,11 +396,7 @@ public class Inventory implements BaseInventory {
             return null;
         }
 
-        if (!isEdible(itemType)) {
-            return itemType;
-        }
-
-        kozosReszek(index);
+        eatItem(index);
 
         return itemType;
     }
@@ -434,7 +420,11 @@ public class Inventory implements BaseInventory {
             return null;
         }
 
-        kozosReszek(index);
+        if (item.getAmount() - 1 == 0) {
+            inventoryManager[index] = null;
+        } else {
+            item.setAmount(item.getAmount() - 1);
+        }
 
         return itemType;
     }

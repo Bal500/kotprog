@@ -51,7 +51,7 @@ public final class GameManager {
     /**
      * A karaktereket tároló lista.
      */
-    private final List<BaseCharacter> characters;
+    private List<BaseCharacter> characters;
 
     /**
      * Az emberi játékos karakter.
@@ -119,7 +119,10 @@ public final class GameManager {
      * @return a karakter pozíciója a pályán, vagy (Integer.MAX_VALUE, Integer.MAX_VALUE) ha nem sikerült hozzáadni
      */
     public Position joinCharacter(String name, boolean player) {
-        if (level == null || gameStarted || playerJoined && player || name.equals("")) {
+        if (getInstance().gameStarted) {
+            return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+        if (level == null || isGameStarted() || playerJoined && player || name == null || name.equals("")) {
             return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
         }
 
@@ -129,13 +132,13 @@ public final class GameManager {
 
         if (!characters.isEmpty()) {
             for (BaseCharacter character : characters) {
-                if (character != null && character.getName().equals(name)) {
+                if (character == null) {
+                    return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
+                } else if (character.getName().equals(name)) {
                     return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
                 }
             }
         }
-
-        // Random cuccok adása
 
         int threshold = 50;
         boolean placed = false;
@@ -144,12 +147,15 @@ public final class GameManager {
             int y = random.nextInt(level.getHeight());
             Position pos = new Position(x, y);
             boolean valid = true;
-            for (BaseCharacter character : characters) {
-                if (level.distance(character.getCurrentPosition(), pos) < threshold) {
-                    valid = false;
-                    break;
+            if (!characters.isEmpty()) {
+                for (BaseCharacter character : characters) {
+                    if (level.distance(character.getCurrentPosition(), pos) < threshold) {
+                        valid = false;
+                        break;
+                    }
                 }
             }
+
             if (valid && getField(x, y).isWalkable()) {
                 BaseCharacter character = new Character(name, x, y);
                 characters.add(character);
@@ -176,12 +182,13 @@ public final class GameManager {
      * @return Az adott nevű karakter objektum, vagy null, ha már a karakter meghalt vagy nem is létezett
      */
     public BaseCharacter getCharacter(String name) {
-        for (BaseCharacter character : characters) {
-            if (character.getName().equals(name)) {
-                if (character.getHp() > 0) {
+        if (name == null) {
+            return null;
+        }
+        if (!characters.isEmpty()) {
+            for (BaseCharacter character : characters) {
+                if (character.getName().equals(name)) {
                     return character;
-                } else {
-                    return null;
                 }
             }
         }
@@ -211,7 +218,7 @@ public final class GameManager {
      * @param level a fájlból betöltött pálya
      */
     public void loadLevel(Level level) {
-        if (!loaded) {
+        if (!getInstance().loaded) {
             fields = new Field[level.getWidth()][level.getHeight()];
             this.level = level;
             if (level != null && !loaded && characters.isEmpty()) {
@@ -220,7 +227,7 @@ public final class GameManager {
                         fields[i][j] = new Field(level.getColor(i, j), i, j);
                     }
                 }
-                loaded = true;
+                getInstance().loaded = true;
             }
         }
     }
@@ -244,7 +251,7 @@ public final class GameManager {
      * @return igaz, ha sikerült elkezdeni a játékot; hamis egyébként
      */
     public boolean startGame() {
-        if (!gameStarted) {
+        if (!getInstance().gameStarted) {
             int humanCount = 0;
             int botCount = 0;
             boolean hasComputerPlayer = false;
@@ -265,22 +272,21 @@ public final class GameManager {
             }
 
             if (characters.size() == 2 && humanCount == 1 && botCount == 1) {
-                gameStarted = true;
+                getInstance().gameStarted = true;
                 return true;
             } else if (characters.size() > 2 && hasHumanPlayer && hasComputerPlayer) {
-                gameStarted = true;
+                getInstance().gameStarted = true;
                 return true;
             } else if (characters.size() < 2) {
-                gameStarted = false;
+                getInstance().gameStarted = false;
                 return false;
             }
         } else {
-            gameStarted = false;
+            getInstance().gameStarted = false;
             return false;
         }
         return false;
     }
-
 
     /**
      * Ez a metódus jelzi, hogy 1 időegység eltelt.<br>
@@ -332,7 +338,7 @@ public final class GameManager {
      * @return igaz, ha a játék már elkezdődött; hamis egyébként
      */
     public boolean isGameStarted() {
-        return this.gameStarted;
+        return getInstance().gameStarted;
     }
 
     /**
@@ -346,28 +352,14 @@ public final class GameManager {
         for (BaseCharacter character : characters) {
             if (character.getHp() > 0) {
                 if (character.getName() == humanName) {
-                    if (character.getHp() > 0) {
-                        playerAlive = true;
-                    } else {
-                        playerAlive = false;
-                    }
+                    playerAlive = true;
                 } else {
-                    if (character.getHp() > 0) {
-                        botAlive = true;
-                        break;
-                    }
+                    botAlive = true;
                 }
             }
         }
-
-        if (playerAlive && !botAlive) {
-            return true;
-        } else if (!playerAlive && botAlive) {
-            return true;
-        }
-        return false;
+        return playerAlive != botAlive;
     }
-
 
     /**
      * Ezen metódus segítségével beállítható, hogy a játékot tutorial módban szeretnénk-e elindítani.<br>
