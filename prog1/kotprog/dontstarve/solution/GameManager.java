@@ -119,10 +119,7 @@ public final class GameManager {
      * @return a karakter pozíciója a pályán, vagy (Integer.MAX_VALUE, Integer.MAX_VALUE) ha nem sikerült hozzáadni
      */
     public Position joinCharacter(String name, boolean player) {
-        if (getInstance().gameStarted) {
-            return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        }
-        if (level == null || isGameStarted() || playerJoined && player || name == null || name.equals("")) {
+        if (level ==     null || isGameStarted() || playerJoined && player || name == null || name.equals("")) {
             return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
         }
 
@@ -142,7 +139,7 @@ public final class GameManager {
 
         int threshold = 50;
         boolean placed = false;
-        while (!placed && threshold >= 5) {
+        while (!placed && threshold >= 0) {
             int x = random.nextInt(level.getWidth());
             int y = random.nextInt(level.getHeight());
             Position pos = new Position(x, y);
@@ -251,7 +248,7 @@ public final class GameManager {
      * @return igaz, ha sikerült elkezdeni a játékot; hamis egyébként
      */
     public boolean startGame() {
-        if (!getInstance().gameStarted) {
+        if (!isGameStarted()) {
             int humanCount = 0;
             int botCount = 0;
             boolean hasComputerPlayer = false;
